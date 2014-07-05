@@ -9,13 +9,47 @@ import (
 	"strings"
 )
 
+// Types
+const (
+	OSU        = 0
+	TAIKO      = 1
+	CTB        = 2
+	MANIA      = 3
+	BEATMAPSET = "s"
+	BEATMAPID  = "b"
+	USERID     = "u"
+)
+
 var (
 	API_URL          string = "https://osu.ppy.sh/api/"
 	API_RECENT_PLAYS string = "get_user_recent"
+	API_GET_BEATMAPS string = "get_beatmaps"
 )
 
 type Database struct {
 	API_KEY string
+}
+
+type Beatmap struct {
+	Beatmapset_ID     string
+	Beatmap_ID        string
+	Approved          string
+	Approved_Date     string
+	Last_Update       string
+	Total_Length      string
+	Hit_Length        string
+	Version           string
+	Artist            string
+	Title             string
+	Creator           string
+	Bpm               string
+	Source            string
+	Difficulty_Rating string
+	Diff_Size         string
+	Diff_Overall      string
+	Diff_Approach     string
+	Diff_Drain        string
+	Mode              string
 }
 
 type Song struct {
@@ -64,11 +98,12 @@ func (d Database) BuildRecentURL(USER_ID string, GAME_TYPE int) string {
 	return API_URL + API_RECENT_PLAYS + "?k=" + d.API_KEY + "&u=" + USER_ID
 }
 
-func (d Database) GetRecentPlays(USER_ID string, GAME_TYPE int) ([]Song, error) {
-	url := d.BuildRecentURL(USER_ID, GAME_TYPE)
-	var songs []Song
+func (d Database) BuildBeatmapURL(ID string, TYPE string) string {
+	return API_URL + API_GET_BEATMAPS + "?k=" + d.API_KEY + "&" + TYPE + "=" + ID
+}
 
-	res, err := http.Get(url)
+func RetrieveHTML(URL string) ([]byte, error) {
+	res, err := http.Get(URL)
 	defer res.Body.Close()
 
 	if err != nil {
@@ -79,6 +114,36 @@ func (d Database) GetRecentPlays(USER_ID string, GAME_TYPE int) ([]Song, error) 
 
 	if err != nil {
 		return nil, errors.New("HTML: Could not read the HTML page grabbed.")
+	}
+
+	return html, err
+}
+
+func (d Database) GetBeatmaps(ID string, TYPE string) ([]Beatmap, error) {
+	var beatmaps []Beatmap
+	url := d.BuildBeatmapURL(ID, TYPE)
+	html, err := RetrieveHTML(url)
+
+	if err != nil {
+		return nil, err
+	}
+
+	err = json.Unmarshal(html, &beatmaps)
+
+	if err != nil {
+		return nil, errors.New("JSON: Couldn't process the HTML page grabbed, most likely due to not being in the right format. Make sure you aren't being redirected due to a network proxy or invalid API Key.")
+	}
+
+	return beatmaps, err
+}
+
+func (d Database) GetRecentPlays(USER_ID string, GAME_TYPE int) ([]Song, error) {
+	var songs []Song
+	url := d.BuildRecentURL(USER_ID, GAME_TYPE)
+	html, err := RetrieveHTML(url)
+
+	if err != nil {
+		return nil, err
 	}
 
 	err = json.Unmarshal(html, &songs)

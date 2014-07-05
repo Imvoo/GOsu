@@ -44,7 +44,7 @@ Say we want to grab the latest plays for a specific user.
 		func main() {
 			DATABASE.SetAPIKey()
 			USER_ID = "Imvoo" // Set this to your ID.
-			songs, err := DATABASE.GetRecentPlays(USER_ID, 0) // 0 represents the Osu! gametype.
+			songs, err := DATABASE.GetRecentPlays(USER_ID, GOsu.OSU) // GOsu.OSU represents the Osu! gametype.
 
 			if err != nil {
 				fmt.Println(err)
