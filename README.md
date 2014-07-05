@@ -75,7 +75,7 @@ Say we want to grab the latest plays for a specific user.
 #### Timeline
 
 - [x] Get User Recent
-- [ ] Get Beatmaps
+- [x] Get Beatmaps
 - [ ] Get User
 - [ ] Get Scores
 - [ ] Get User Best
