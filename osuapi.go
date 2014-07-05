@@ -12,7 +12,6 @@ import (
 var (
 	API_URL          string = "https://osu.ppy.sh/api/"
 	API_RECENT_PLAYS string = "get_user_recent"
-	USER_ID          string
 )
 
 type Database struct {
@@ -61,15 +60,12 @@ func (d *Database) SetAPIKey() error {
 	return err
 }
 
-func SetUserID(user string) {
-	USER_ID = user
+func (d Database) BuildRecentURL(USER_ID string, GAME_TYPE int) string {
+	return API_URL + API_RECENT_PLAYS + "?k=" + d.API_KEY + "&u=" + USER_ID
 }
 
-func (d Database) BuildRecentURL(IN_USER_ID string, GAME_TYPE int) string {
-	return API_URL + API_RECENT_PLAYS + "?k=" + d.API_KEY + "&u=" + IN_USER_ID
-}
-
-func GetRecentPlays(url string) ([]Song, error) {
+func (d Database) GetRecentPlays(USER_ID string, GAME_TYPE int) ([]Song, error) {
+	url := d.BuildRecentURL(USER_ID, GAME_TYPE)
 	var songs []Song
 
 	res, err := http.Get(url)
