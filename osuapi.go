@@ -11,10 +11,10 @@ import (
 
 // Types
 const (
-	OSU        = 0
-	TAIKO      = 1
-	CTB        = 2
-	MANIA      = 3
+	OSU        = "0"
+	TAIKO      = "1"
+	CTB        = "2"
+	MANIA      = "3"
 	BEATMAPSET = "s"
 	BEATMAPID  = "b"
 	USERID     = "u"
@@ -24,6 +24,7 @@ var (
 	API_URL          string = "https://osu.ppy.sh/api/"
 	API_RECENT_PLAYS string = "get_user_recent"
 	API_GET_BEATMAPS string = "get_beatmaps"
+	API_GET_USER     string = "get_user"
 )
 
 type Database struct {
@@ -69,6 +70,34 @@ type Song struct {
 	Rank         string
 }
 
+type User struct {
+	User_ID       string
+	Username      string
+	Count300      string
+	Count100      string
+	Count50       string
+	PlayCount     string
+	Ranked_Score  string
+	Total_Score   string
+	PP_Rank       string
+	Level         string
+	PP_Raw        string
+	Accuracy      string
+	Count_Rank_SS string
+	Count_Rank_S  string
+	Count_Rank_A  string
+	Country       string
+	Events        []Event
+}
+
+type Event struct {
+	Display_HTML  string
+	Beatmap_ID    string
+	Beatmapset_ID string
+	Date          string
+	EpicFactor    string
+}
+
 func (d *Database) SetAPIKey() error {
 	tempKey, err := ioutil.ReadFile("./APIKEY.txt")
 
@@ -94,12 +123,16 @@ func (d *Database) SetAPIKey() error {
 	return err
 }
 
-func (d Database) BuildRecentURL(USER_ID string, GAME_TYPE int) string {
-	return API_URL + API_RECENT_PLAYS + "?k=" + d.API_KEY + "&u=" + USER_ID
+func (d Database) BuildRecentURL(USER_ID string, GAME_TYPE string) string {
+	return API_URL + API_RECENT_PLAYS + "?k=" + d.API_KEY + "&u=" + USER_ID + "&m=" + GAME_TYPE
 }
 
 func (d Database) BuildBeatmapURL(ID string, TYPE string) string {
 	return API_URL + API_GET_BEATMAPS + "?k=" + d.API_KEY + "&" + TYPE + "=" + ID
+}
+
+func (d Database) BuildUserURL(USER_ID string, GAME_TYPE string, DAYS string) string {
+	return API_URL + API_GET_USER + "?k=" + d.API_KEY + "&u=" + USER_ID + "&m=" + GAME_TYPE + "&event_days=" + DAYS
 }
 
 func RetrieveHTML(URL string) ([]byte, error) {
@@ -117,6 +150,24 @@ func RetrieveHTML(URL string) ([]byte, error) {
 	}
 
 	return html, err
+}
+
+func (d Database) GetUser(USER_ID string, GAME_TYPE string, DAYS string) ([]User, error) {
+	var user []User
+	url := d.BuildUserURL(USER_ID, GAME_TYPE, DAYS)
+	html, err := RetrieveHTML(url)
+
+	if err != nil {
+		return user, err
+	}
+
+	err = json.Unmarshal(html, &user)
+
+	if err != nil {
+		return user, err
+	}
+
+	return user, err
 }
 
 func (d Database) GetBeatmaps(ID string, TYPE string) ([]Beatmap, error) {
@@ -137,7 +188,7 @@ func (d Database) GetBeatmaps(ID string, TYPE string) ([]Beatmap, error) {
 	return beatmaps, err
 }
 
-func (d Database) GetRecentPlays(USER_ID string, GAME_TYPE int) ([]Song, error) {
+func (d Database) GetRecentPlays(USER_ID string, GAME_TYPE string) ([]Song, error) {
 	var songs []Song
 	url := d.BuildRecentURL(USER_ID, GAME_TYPE)
 	html, err := RetrieveHTML(url)
@@ -149,7 +200,7 @@ func (d Database) GetRecentPlays(USER_ID string, GAME_TYPE int) ([]Song, error) 
 	err = json.Unmarshal(html, &songs)
 
 	if err != nil {
-		return nil, errors.New("JSON: Couldn't process the HTML page grabbed, most likely due to not being in the right format. Make sure you aren't being redirected due to a network proxy or invalid API Key.")
+		return nil, errors.New("JSON: Couldn't process the HTML page grabbed, most likely due to not being in the right format. Make sure you aren't being redirected due to a network proxy or invalid API Key." + string(url))
 	}
 
 	return songs, err
