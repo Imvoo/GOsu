@@ -28,6 +28,7 @@ var (
 	API_GET_USER      string = "get_user"
 	API_GET_SCORES    string = "get_scores"
 	API_GET_USER_BEST string = "get_user_best"
+	API_GET_MATCH     string = "get_match"
 )
 
 type Database struct {
@@ -137,6 +138,48 @@ type PPSong struct {
 	PP           string
 }
 
+type Game struct {
+	Match MPMatch
+	Games []MPGame
+}
+
+type MPMatch struct {
+	Match_ID   string
+	Name       string
+	Start_Time string
+	End_Time   string
+}
+
+type MPGame struct {
+	Game_ID      string
+	Start_Time   string
+	End_Time     string
+	Beatmap_ID   string
+	Play_Mode    string
+	Match_Type   string
+	Scoring_Type string
+	Team_Type    string
+	Mods         string
+	Scores       []MPScore
+}
+
+type MPScore struct {
+	Slot      string
+	Team      string
+	User_ID   string
+	Score     string
+	MaxCombo  string
+	Rank      string
+	Count50   string
+	Count100  string
+	Count300  string
+	CountMiss string
+	CountGeki string
+	CountKatu string
+	Perfect   string
+	Pass      string
+}
+
 func (d *Database) SetAPIKey() error {
 	dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
 	if err != nil {
@@ -185,6 +228,10 @@ func (d Database) BuildUserBestURL(USER_ID string, GAME_TYPE string) string {
 
 func (d Database) BuildScoreURL(BEATMAP_ID string, USER_ID string, GAME_TYPE string) string {
 	return API_URL + API_GET_SCORES + "?k=" + d.API_KEY + "&b=" + BEATMAP_ID + "&m=" + GAME_TYPE + "&u=" + USER_ID
+}
+
+func (d Database) BuildMatchURL(MATCH_ID string) string {
+	return API_URL + API_GET_MATCH + "?k=" + d.API_KEY + "&mp=" + MATCH_ID
 }
 
 func RetrieveHTML(URL string) ([]byte, error) {
@@ -292,6 +339,24 @@ func (d Database) GetUserBest(USER_ID string, GAME_TYPE string) ([]PPSong, error
 	}
 
 	return songs, err
+}
+
+func (d Database) GetMatch(MATCH_ID string) (Game, error) {
+	var game Game
+	url := d.BuildMatchURL(MATCH_ID)
+	html, err := RetrieveHTML(url)
+
+	if err != nil {
+		return game, err
+	}
+
+	err = json.Unmarshal(html, &game)
+
+	if err != nil {
+		return game, errors.New("JSON: Couldn't process HTML into JSON data. You might have the wrong page or a wrong API key. The HTML grabbed at " + url + " will be displayed below:\n" + string(html))
+	}
+
+	return game, err
 }
 
 // ONLY A TEMPORARY FUNCTION.
