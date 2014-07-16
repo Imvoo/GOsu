@@ -80,6 +80,6 @@ Say we want to grab the latest plays for a specific user.
 - [x] Get Scores
 - [x] Get User Best
 - [x] Get Match
-- [ ] Mods
+- [x] Mods
 
 

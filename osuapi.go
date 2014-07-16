@@ -21,6 +21,34 @@ const (
 	USERID     = "u"
 )
 
+// Mods
+const (
+	None   = 0
+	NoFail = 1 << (iota - 1)
+	Easy
+	NoVideo
+	Hidden
+	HardRock
+	SuddenDeath
+	DoubleTime
+	Relax
+	HalfTime
+	Nightcore
+	Flashlight
+	Autoplay
+	SpunOut
+	Relax2
+	Perfect
+	Key4
+	Key5
+	Key6
+	Key7
+	Key8
+	FadeIn
+	Random
+	LastMod
+)
+
 var (
 	API_URL           string = "https://osu.ppy.sh/api/"
 	API_RECENT_PLAYS  string = "get_user_recent"
@@ -257,13 +285,13 @@ func (d Database) GetUser(USER_ID string, GAME_TYPE string, DAYS string) ([]User
 	html, err := RetrieveHTML(url)
 
 	if err != nil {
-		return nil, err
+		return user, err
 	}
 
 	err = json.Unmarshal(html, &user)
 
 	if err != nil {
-		return nil, errors.New("JSON: Couldn't process HTML into JSON data. You might have the wrong page or a wrong API key. The HTML grabbed at " + url + " will be displayed below:\n" + string(html))
+		return user, errors.New("JSON: Couldn't process HTML into JSON data. You might have the wrong page or a wrong API key. The HTML grabbed at " + url + " will be displayed below:\n" + string(html))
 	}
 
 	return user, err
