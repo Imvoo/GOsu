@@ -77,8 +77,8 @@ Say we want to grab the latest plays for a specific user.
 - [x] Get User Recent
 - [x] Get Beatmaps
 - [x] Get User
-- [ ] Get Scores
-- [ ] Get User Best
+- [x] Get Scores
+- [x] Get User Best
 - [ ] Get Match
 - [ ] Mods
 

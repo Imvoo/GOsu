@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -21,11 +22,12 @@ const (
 )
 
 var (
-	API_URL          string = "https://osu.ppy.sh/api/"
-	API_RECENT_PLAYS string = "get_user_recent"
-	API_GET_BEATMAPS string = "get_beatmaps"
-	API_GET_USER     string = "get_user"
-	API_GET_SCORES   string = "get_scores"
+	API_URL           string = "https://osu.ppy.sh/api/"
+	API_RECENT_PLAYS  string = "get_user_recent"
+	API_GET_BEATMAPS  string = "get_beatmaps"
+	API_GET_USER      string = "get_user"
+	API_GET_SCORES    string = "get_scores"
+	API_GET_USER_BEST string = "get_user_best"
 )
 
 type Database struct {
@@ -117,8 +119,31 @@ type Score struct {
 	PP           string
 }
 
+type PPSong struct {
+	Beatmap_ID   string
+	Score        string
+	MaxCombo     string
+	Count50      string
+	Count100     string
+	Count300     string
+	CountMiss    string
+	CountKatu    string
+	CountGeki    string
+	Perfect      string
+	Enabled_Mods string
+	User_ID      string
+	Date         string
+	Rank         string
+	PP           string
+}
+
 func (d *Database) SetAPIKey() error {
-	tempKey, err := ioutil.ReadFile("./APIKEY.txt")
+	dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
+	if err != nil {
+		return err
+	}
+
+	tempKey, err := ioutil.ReadFile(dir + "/APIKEY.txt")
 
 	// If there is no file, try find the API Key in the Environment Variables.
 	if err != nil {
@@ -152,6 +177,10 @@ func (d Database) BuildBeatmapURL(ID string, TYPE string) string {
 
 func (d Database) BuildUserURL(USER_ID string, GAME_TYPE string, DAYS string) string {
 	return API_URL + API_GET_USER + "?k=" + d.API_KEY + "&u=" + USER_ID + "&m=" + GAME_TYPE + "&event_days=" + DAYS
+}
+
+func (d Database) BuildUserBestURL(USER_ID string, GAME_TYPE string) string {
+	return API_URL + API_GET_USER_BEST + "?k=" + d.API_KEY + "&u=" + USER_ID + "&m=" + GAME_TYPE
 }
 
 func (d Database) BuildScoreURL(BEATMAP_ID string, USER_ID string, GAME_TYPE string) string {
@@ -245,6 +274,24 @@ func (d Database) GetScores(BEATMAP_ID string, USER_ID string, GAME_TYPE string)
 	}
 
 	return scores, err
+}
+
+func (d Database) GetUserBest(USER_ID string, GAME_TYPE string) ([]PPSong, error) {
+	var songs []PPSong
+	url := d.BuildUserBestURL(USER_ID, GAME_TYPE)
+	html, err := RetrieveHTML(url)
+
+	if err != nil {
+		return nil, err
+	}
+
+	err = json.Unmarshal(html, &songs)
+
+	if err != nil {
+		return nil, errors.New("JSON: Couldn't process HTML into JSON data. You might have the wrong page or a wrong API key. The HTML grabbed at " + url + " will be displayed below:\n" + string(html))
+	}
+
+	return songs, err
 }
 
 // ONLY A TEMPORARY FUNCTION.
