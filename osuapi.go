@@ -25,6 +25,7 @@ var (
 	API_RECENT_PLAYS string = "get_user_recent"
 	API_GET_BEATMAPS string = "get_beatmaps"
 	API_GET_USER     string = "get_user"
+	API_GET_SCORES   string = "get_scores"
 )
 
 type Database struct {
@@ -98,6 +99,24 @@ type Event struct {
 	EpicFactor    string
 }
 
+type Score struct {
+	Score        string
+	Username     string
+	MaxCombo     string
+	Count50      string
+	Count100     string
+	Count300     string
+	CountMiss    string
+	CountKatu    string
+	CountGeki    string
+	Perfect      string
+	Enabled_Mods string
+	User_ID      string
+	Date         string
+	Rank         string
+	PP           string
+}
+
 func (d *Database) SetAPIKey() error {
 	tempKey, err := ioutil.ReadFile("./APIKEY.txt")
 
@@ -133,6 +152,10 @@ func (d Database) BuildBeatmapURL(ID string, TYPE string) string {
 
 func (d Database) BuildUserURL(USER_ID string, GAME_TYPE string, DAYS string) string {
 	return API_URL + API_GET_USER + "?k=" + d.API_KEY + "&u=" + USER_ID + "&m=" + GAME_TYPE + "&event_days=" + DAYS
+}
+
+func (d Database) BuildScoreURL(BEATMAP_ID string, USER_ID string, GAME_TYPE string) string {
+	return API_URL + API_GET_SCORES + "?k=" + d.API_KEY + "&b=" + BEATMAP_ID + "&m=" + GAME_TYPE + "&u=" + USER_ID
 }
 
 func RetrieveHTML(URL string) ([]byte, error) {
@@ -204,6 +227,24 @@ func (d Database) GetRecentPlays(USER_ID string, GAME_TYPE string) ([]Song, erro
 	}
 
 	return songs, err
+}
+
+func (d Database) GetScores(BEATMAP_ID string, USER_ID string, GAME_TYPE string) ([]Score, error) {
+	var scores []Score
+	url := d.BuildScoreURL(BEATMAP_ID, USER_ID, GAME_TYPE)
+	html, err := RetrieveHTML(url)
+
+	if err != nil {
+		return nil, err
+	}
+
+	err = json.Unmarshal(html, &scores)
+
+	if err != nil {
+		return nil, errors.New("JSON: Couldn't process HTML into JSON data. You might have the wrong page or a wrong API key. The HTML grabbed at " + url + " will be displayed below:\n" + string(html))
+	}
+
+	return scores, err
 }
 
 // ONLY A TEMPORARY FUNCTION.
