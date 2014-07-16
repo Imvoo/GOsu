@@ -158,13 +158,13 @@ func (d Database) GetUser(USER_ID string, GAME_TYPE string, DAYS string) ([]User
 	html, err := RetrieveHTML(url)
 
 	if err != nil {
-		return user, err
+		return nil, err
 	}
 
 	err = json.Unmarshal(html, &user)
 
 	if err != nil {
-		return user, err
+		return nil, errors.New("JSON: Couldn't process HTML into JSON data. You might have the wrong page or a wrong API key. The HTML grabbed at " + url + " will be displayed below:\n" + string(html))
 	}
 
 	return user, err
@@ -182,7 +182,7 @@ func (d Database) GetBeatmaps(ID string, TYPE string) ([]Beatmap, error) {
 	err = json.Unmarshal(html, &beatmaps)
 
 	if err != nil {
-		return nil, errors.New("JSON: Couldn't process the HTML page grabbed, most likely due to not being in the right format. Make sure you aren't being redirected due to a network proxy or invalid API Key.")
+		return nil, errors.New("JSON: Couldn't process HTML into JSON data. You might have the wrong page or a wrong API key. The HTML grabbed at " + url + " will be displayed below:\n" + string(html))
 	}
 
 	return beatmaps, err
@@ -200,7 +200,7 @@ func (d Database) GetRecentPlays(USER_ID string, GAME_TYPE string) ([]Song, erro
 	err = json.Unmarshal(html, &songs)
 
 	if err != nil {
-		return nil, errors.New("JSON: Couldn't process the HTML page grabbed, most likely due to not being in the right format. Make sure you aren't being redirected due to a network proxy or invalid API Key." + string(url))
+		return nil, errors.New("JSON: Couldn't process HTML into JSON data. You might have the wrong page or a wrong API key. The HTML grabbed at " + url + " will be displayed below:\n" + string(html))
 	}
 
 	return songs, err
