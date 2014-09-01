@@ -264,11 +264,12 @@ func (d Database) BuildMatchURL(MATCH_ID string) string {
 
 func RetrieveHTML(URL string) ([]byte, error) {
 	res, err := http.Get(URL)
-	defer res.Body.Close()
 
 	if err != nil {
 		return nil, errors.New("HTTP: Could not open a connection to the Osu! API server.")
 	}
+
+	defer res.Body.Close()
 
 	html, err := ioutil.ReadAll(res.Body)
 
