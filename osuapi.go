@@ -408,3 +408,45 @@ func GetLocalPlays(path string) ([]Song, error) {
 
 	return songs, err
 }
+
+func GetMods(mods int) []string {
+	var resultantMods []string
+
+	if mods == 0 {
+		resultantMods = append(resultantMods, "None")
+		return resultantMods
+	}
+
+	AddMod(&resultantMods, &mods, LastMod, "Last Mod")
+	AddMod(&resultantMods, &mods, Random, "Random")
+	AddMod(&resultantMods, &mods, FadeIn, "Fade In")
+	AddMod(&resultantMods, &mods, Key8, "Key 8")
+	AddMod(&resultantMods, &mods, Key7, "Key 7")
+	AddMod(&resultantMods, &mods, Key6, "Key 6")
+	AddMod(&resultantMods, &mods, Key5, "Key 5")
+	AddMod(&resultantMods, &mods, Key4, "Key 4")
+	AddMod(&resultantMods, &mods, Perfect, "Perfect")
+	AddMod(&resultantMods, &mods, Relax2, "Relax 2")
+	AddMod(&resultantMods, &mods, SpunOut, "Spun Out")
+	AddMod(&resultantMods, &mods, Autoplay, "Autoplay")
+	AddMod(&resultantMods, &mods, Flashlight, "Flashlight")
+	AddMod(&resultantMods, &mods, Nightcore, "Nightcore")
+	AddMod(&resultantMods, &mods, HalfTime, "Half Time")
+	AddMod(&resultantMods, &mods, Relax, "Relax")
+	AddMod(&resultantMods, &mods, DoubleTime, "Double Time")
+	AddMod(&resultantMods, &mods, SuddenDeath, "Sudden Death")
+	AddMod(&resultantMods, &mods, HardRock, "Hard Rock")
+	AddMod(&resultantMods, &mods, Hidden, "Hidden")
+	AddMod(&resultantMods, &mods, NoVideo, "No Video")
+	AddMod(&resultantMods, &mods, Easy, "Easy")
+	AddMod(&resultantMods, &mods, NoFail, "No Fail")
+
+	return resultantMods
+}
+
+func AddMod(array *[]string, remainingMods *int, mod int, modName string) {
+	if mod <= *remainingMods {
+		*remainingMods -= mod
+		*array = append(*array, modName)
+	}
+}
