@@ -2,7 +2,8 @@
 ###### Osu! API Wrapper written in GoLang.
 
 ### Overview
-This wrapper allows you to use the Osu! API in GoLang provided you have an API key to use.
+This wrapper allows you to use the Osu! API in GoLang provided you have an API key.
+It is licenced under the MIT Licence meaning you can do anything you want with it as long as you provide attribution.
 
 #### Requirements
 
@@ -13,7 +14,7 @@ This wrapper allows you to use the Osu! API in GoLang provided you have an API k
 
 Assuming your GoPath environment variable is setup properly, in your terminal type in:
 
-	go get github.com/Imvoo/GOsu
+	$ go get github.com/Imvoo/GOsu
 
 This will install GOsu to your GoLang path and then you can call it in your Go files with the import path github.com/Imvoo/GOsu.
 
@@ -44,7 +45,7 @@ Say we want to grab the latest plays for a specific user.
 		func main() {
 			DATABASE.SetAPIKey()
 			USER_ID = "Imvoo" // Set this to your ID.
-			songs, err := DATABASE.GetRecentPlays(USER_ID, GOsu.OSU) // GOsu.OSU represents the Osu! gametype.
+			songs, err := DATABASE.GetRecentPlays(USER_ID, GOsu.OSU) // GOsu.OSU represents the Osu! gametype (as opposed to Taiko, Catch The Beat etc).
 
 			if err != nil {
 				fmt.Println(err)
