@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-// Types
+// Osu Game Types which can be accessed via GOsu.<GAMETYPE>.
 const (
 	OSU        = "0"
 	TAIKO      = "1"
@@ -21,7 +21,11 @@ const (
 	USERID     = "u"
 )
 
-// Mods
+// Osu Mods which are accessed by the GetMod function.
+// iota moves the 'binary 1' to the left.
+// e.g. NoFail = 1, Easy = 10 in binary which is 2.
+// NoVideo = 100 in binary which is 4.
+// This is done in order for any combination of mods to be enabled at once.
 const (
 	None   = 0
 	NoFail = 1 << (iota - 1)
@@ -292,7 +296,7 @@ func (d Database) GetUser(USER_ID string, GAME_TYPE string, DAYS string) ([]User
 	err = json.Unmarshal(html, &user)
 
 	if err != nil {
-		return user, errors.New("JSON: Couldn't process HTML into JSON data. You might have the wrong page or a wrong API key. The HTML grabbed at " + url + " will be displayed below:\n" + string(html))
+		return user, errors.New("JSON: Couldn't process the HTML into JSON. Possible wrong page/wrong API key/offline server.")
 	}
 
 	return user, err
@@ -310,7 +314,7 @@ func (d Database) GetBeatmaps(ID string, TYPE string) ([]Beatmap, error) {
 	err = json.Unmarshal(html, &beatmaps)
 
 	if err != nil {
-		return nil, errors.New("JSON: Couldn't process HTML into JSON data. You might have the wrong page or a wrong API key. The HTML grabbed at " + url + " will be displayed below:\n" + string(html))
+		return nil, errors.New("JSON: Couldn't process the HTML into JSON. Possible wrong page/wrong API key/offline server.")
 	}
 
 	return beatmaps, err
@@ -328,7 +332,7 @@ func (d Database) GetRecentPlays(USER_ID string, GAME_TYPE string) ([]Song, erro
 	err = json.Unmarshal(html, &songs)
 
 	if err != nil {
-		return nil, errors.New("JSON: Couldn't process HTML into JSON data. You might have the wrong page or a wrong API key. The HTML grabbed at " + url + " will be displayed below:\n" + string(html))
+		return nil, errors.New("JSON: Couldn't process the HTML into JSON. Possible wrong page/wrong API key/offline server.")
 	}
 
 	return songs, err
@@ -346,7 +350,7 @@ func (d Database) GetScores(BEATMAP_ID string, USER_ID string, GAME_TYPE string)
 	err = json.Unmarshal(html, &scores)
 
 	if err != nil {
-		return nil, errors.New("JSON: Couldn't process HTML into JSON data. You might have the wrong page or a wrong API key. The HTML grabbed at " + url + " will be displayed below:\n" + string(html))
+		return nil, errors.New("JSON: Couldn't process the HTML into JSON. Possible wrong page/wrong API key/offline server.")
 	}
 
 	return scores, err
@@ -364,7 +368,7 @@ func (d Database) GetUserBest(USER_ID string, GAME_TYPE string) ([]PPSong, error
 	err = json.Unmarshal(html, &songs)
 
 	if err != nil {
-		return nil, errors.New("JSON: Couldn't process HTML into JSON data. You might have the wrong page or a wrong API key. The HTML grabbed at " + url + " will be displayed below:\n" + string(html))
+		return nil, errors.New("JSON: Couldn't process the HTML into JSON. Possible wrong page/wrong API key/offline server.")
 	}
 
 	return songs, err
@@ -382,7 +386,7 @@ func (d Database) GetMatch(MATCH_ID string) (Game, error) {
 	err = json.Unmarshal(html, &game)
 
 	if err != nil {
-		return game, errors.New("JSON: Couldn't process HTML into JSON data. You might have the wrong page or a wrong API key. The HTML grabbed at " + url + " will be displayed below:\n" + string(html))
+		return game, errors.New("JSON: Couldn't process the HTML into JSON. Possible wrong page/wrong API key/offline server.")
 	}
 
 	return game, err
