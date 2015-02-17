@@ -5,9 +5,6 @@ import (
 	"errors"
 	"io/ioutil"
 	"net/http"
-	"os"
-	"path/filepath"
-	"strings"
 )
 
 // Game Types which can be accessed via GOsu.<GAMETYPE>.
@@ -217,11 +214,12 @@ type MPScore struct {
 }
 
 func (d *Database) SetAPIKey(API_KEY string) error {
+	var err error
 	if len(API_KEY) <= 1 {
 		err = errors.New("API Key: invalid/non-existant API key.")
 		return err
 	} else {
-		d.API_KEY = string(tempKey)
+		d.API_KEY = API_KEY
 	}
 
 	return err
