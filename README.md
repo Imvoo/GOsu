@@ -22,7 +22,7 @@ This will install GOsu to your GoLang path and then you can call it in your Go f
 
 Say we want to grab the latest plays for a specific user.
 
-1. We first want to grab our API key and paste it in a file in the project directory under the name APIKEY.txt.
+1. We first want to grab our API key and paste it somewhere later to pass into our application.
 
 2. We then start to setup the database to handle the connections to the Osu! Api.
 
@@ -36,14 +36,14 @@ Say we want to grab the latest plays for a specific user.
 		)
 
 		func main() {
-			DATABASE.SetAPIKey()
+			DATABASE.SetAPIKey("API Key is pasted here.")
 			USER_ID = "Imvoo" // Set this to your ID.
 		}
 
 3. After setting the database up, we can request the recent plays of the specified user by adding to the main function.
 
 		func main() {
-			DATABASE.SetAPIKey()
+			DATABASE.SetAPIKey("API Key is pasted here.")
 			USER_ID = "Imvoo" // Set this to your ID.
 			songs, err := DATABASE.GetRecentPlays(USER_ID, GOsu.OSU) // GOsu.OSU represents the Osu! gametype (as opposed to Taiko, Catch The Beat etc).
 

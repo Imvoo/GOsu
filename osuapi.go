@@ -10,12 +10,16 @@ import (
 	"strings"
 )
 
-// Osu Game Types which can be accessed via GOsu.<GAMETYPE>.
+// Game Types which can be accessed via GOsu.<GAMETYPE>.
 const (
-	OSU        = "0"
-	TAIKO      = "1"
-	CTB        = "2"
-	MANIA      = "3"
+	OSU   = "0"
+	TAIKO = "1"
+	CTB   = "2"
+	MANIA = "3"
+)
+
+// Beatmap Identifier Types for use with GetBeatmaps.
+const (
 	BEATMAPSET = "s"
 	BEATMAPID  = "b"
 	USERID     = "u"
@@ -212,32 +216,13 @@ type MPScore struct {
 	Pass      string
 }
 
-func (d *Database) SetAPIKey() error {
-	dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
-	if err != nil {
+func (d *Database) SetAPIKey(API_KEY string) error {
+	if len(API_KEY) <= 1 {
+		err = errors.New("API Key: invalid/non-existant API key.")
 		return err
-	}
-
-	tempKey, err := ioutil.ReadFile(dir + "/APIKEY.txt")
-
-	// If there is no file, try find the API Key in the Environment Variables.
-	if err != nil {
-		d.API_KEY = os.Getenv("APIKEY")
-
-		if len(d.API_KEY) <= 1 {
-			err = errors.New("API Key: unable to locate API Key in environment variables or in local APIKEY.txt file.")
-			return err
-		} else {
-			err = nil
-		}
 	} else {
 		d.API_KEY = string(tempKey)
 	}
-
-	// Trims spaces and trailing newlines from the API key so that the URL
-	// to retrieve songs can be built properly.
-	d.API_KEY = strings.TrimSpace(d.API_KEY)
-	d.API_KEY = strings.Trim(d.API_KEY, "\r\n")
 
 	return err
 }
@@ -302,9 +287,9 @@ func (d Database) GetUser(USER_ID string, GAME_TYPE string, DAYS string) ([]User
 	return user, err
 }
 
-func (d Database) GetBeatmaps(ID string, TYPE string) ([]Beatmap, error) {
+func (d Database) GetBeatmaps(ID string, BM_TYPE string) ([]Beatmap, error) {
 	var beatmaps []Beatmap
-	url := d.BuildBeatmapURL(ID, TYPE)
+	url := d.BuildBeatmapURL(ID, BM_TYPE)
 	html, err := RetrieveHTML(url)
 
 	if err != nil {
