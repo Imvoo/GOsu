@@ -226,7 +226,7 @@ func (d *Database) SetAPIKey(API_KEY string) error {
 }
 
 func (d Database) BuildRecentURL(USER_ID string, GAME_TYPE string) string {
-	return API_URL + API_RECENT_PLAYS + "?k=" + d.API_KEY + "&u=" + USER_ID + "&m=" + GAME_TYPE
+	return API_URL + API_RECENT_PLAYS + "?k=" + d.API_KEY + "&u=" + USER_ID + "&m=" + GAME_TYPE + "&limit=50"
 }
 
 func (d Database) BuildBeatmapURL(ID string, TYPE string) string {
