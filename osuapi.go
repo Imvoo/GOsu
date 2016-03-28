@@ -124,7 +124,7 @@ type User struct {
 	Count_Rank_S  string
 	Count_Rank_A  string
 	Country       string
-	Country_Rank  string
+	PP_Country_Rank  string
 	Events        []Event
 }
 
