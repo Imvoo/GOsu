@@ -72,22 +72,30 @@ type Beatmap struct {
 	Beatmapset_ID     string
 	Beatmap_ID        string
 	Approved          string
-	Approved_Date     string
-	Last_Update       string
 	Total_Length      string
 	Hit_Length        string
 	Version           string
-	Artist            string
-	Title             string
-	Creator           string
-	Bpm               string
-	Source            string
-	Difficulty_Rating string
+	File_MD5	      string
 	Diff_Size         string
 	Diff_Overall      string
 	Diff_Approach     string
 	Diff_Drain        string
 	Mode              string
+	Approved_Date     string
+	Last_Update       string
+	Artist            string
+	Title             string
+	Creator           string
+	Bpm               string
+	Source            string
+	Tags			  string
+	Genre_ID		  string
+	Language_ID		  string
+	Favourite_Count   string
+	PlayCount		  string
+	PassCount		  string
+	Max_Combo		  string
+	Difficulty_Rating string
 }
 
 type Song struct {
